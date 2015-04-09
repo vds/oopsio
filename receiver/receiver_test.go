@@ -12,27 +12,30 @@ import (
 	"github.com/vds/oopsio/receiver"
 )
 
-// func TestRun(t *testing.T) {
-// 	a := "127.0.0.1:5678"
-// 	q := make(chan struct{})
-// 	r := receiver.NewReceiver(q, "")
-// 	laddr, err := net.ResolveTCPAddr("tcp", a)
-// 	if nil != err {
-// 		t.Fatalf(err.Error())
-// 	}
-// 	go r.Run(laddr)
-// 	runtime.Gosched()
-// 	conn, err := net.Dial("tcp", a)
-// 	if err != nil {
-// 		t.Fatalf(err.Error())
-// 	}
-// 	defer conn.Close()
-// 	ra := conn.RemoteAddr()
-// 	if ra.String() != a {
-// 		t.Fatalf("Remote address shoud be: %s, but is: %s", a, ra)
-// 	}
-// }
+// TestRun tests the Run method of the receiver.
+func TestRun(t *testing.T) {
+	a := "127.0.0.1:5678"
+	q := make(chan struct{})
+	r := receiver.NewReceiver(q, "")
+	laddr, err := net.ResolveTCPAddr("tcp", a)
+	if nil != err {
+		t.Fatalf(err.Error())
+	}
+	go r.Run(laddr)
+	runtime.Gosched()
+	conn, err := net.Dial("tcp", a)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+	defer conn.Close()
+	ra := conn.RemoteAddr()
+	if ra.String() != a {
+		t.Fatalf("Remote address shoud be: %s, but is: %s", a, ra)
+	}
+	r.Quit <- struct{}{}
+}
 
+// TestReceiveOops tests the receiving of a oops.
 func TestReceiveOops(t *testing.T) {
 	d, err := ioutil.TempDir("/tmp/", "oops")
 	if err != nil {

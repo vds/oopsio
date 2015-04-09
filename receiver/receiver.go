@@ -12,13 +12,13 @@ import (
 
 // NewReceiver is a Receiver factory
 func NewReceiver(quit chan struct{}, path string) Receiver {
-	return Receiver{quit: quit, path: path}
+	return Receiver{Quit: quit, path: path}
 }
 
 // Receiver implements a simple TCP service to receive Oopses
 type Receiver struct {
 	Wg   sync.WaitGroup
-	quit chan struct{}
+	Quit chan struct{}
 	path string
 }
 
@@ -45,7 +45,7 @@ func (r *Receiver) Run(laddr *net.TCPAddr) {
 			log.Println(err)
 		}
 		select {
-		case <-r.quit:
+		case <-r.Quit:
 			return
 		default:
 		}
