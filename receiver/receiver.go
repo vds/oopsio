@@ -6,6 +6,7 @@ import (
 	"net"
 	"os"
 	"path"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -64,7 +65,7 @@ func (r *Receiver) ReceiveOops(c net.Conn) {
 			log.Println(err)
 		}
 	}()
-	f, err := os.Create(path.Join(r.path, string(time.Now().UnixNano())+".oops"))
+	f, err := os.Create(path.Join(r.path, strconv.Itoa(int(time.Now().UnixNano()))+".oops"))
 	if err != nil {
 		log.Println(err)
 		return
