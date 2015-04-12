@@ -36,23 +36,23 @@ func main() {
 		close(quit)
 		os.Exit(0)
 	default:
-		// FIXME send each oops file
-		conn, err := net.Dial("tcp", *raddr)
-		if err != nil {
-			log.Fatalf(err.Error())
-		}
 		for _, of := range fs {
+			log.Printf("Sending: %s\n", of.Name())
 			f, err := os.Open(path.Join(*oopspath, of.Name()))
 			if err != nil {
 				log.Fatal(err)
 			}
-			_, err = io.Copy(f, conn)
+			conn, err := net.Dial("tcp", *raddr)
+			if err != nil {
+				log.Fatalf(err.Error())
+			}
+			_, err = io.Copy(conn, f)
 			if err != nil {
 				log.Printf("error send oops: %s", err)
 			}
-
+			f.Close()
+			conn.Close()
 		}
-		conn.Close()
 
 	}
 }

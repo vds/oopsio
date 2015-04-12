@@ -55,9 +55,9 @@ func (r *Receiver) Run(laddr *net.TCPAddr) {
 	}
 }
 
-// ReceiverOops is the TPC connection handler that handles the reception of oopses
+// ReceiverOops is the TPC connection handler that handles the
+// reception of oopses.
 func (r *Receiver) ReceiveOops(c net.Conn) {
-	log.Println("Receiving")
 	defer func() {
 		r.Wg.Done()
 		err := c.Close()
@@ -65,19 +65,23 @@ func (r *Receiver) ReceiveOops(c net.Conn) {
 			log.Println(err)
 		}
 	}()
-	f, err := os.Create(path.Join(r.path, strconv.Itoa(int(time.Now().UnixNano()))+".oops"))
+	n := path.Join(
+		r.path, strconv.Itoa(int(time.Now().UnixNano()))+".oops")
+	f, err := os.Create(n)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 	defer f.Close()
 
-	// FIXME what happens if there is an error when receiving the Oops?
+	//FIXME what happens if there is an error when receiving the Oops?
 	// How do we notify the dispatcher?
+	log.Printf("Copying: %s\n", n)
 	_, err = io.Copy(f, c)
 	if err != nil {
 		log.Printf("error handling request: %s", err)
 	}
+	log.Println("Copied")
 }
 
 // Stop stops the receptions of oops
